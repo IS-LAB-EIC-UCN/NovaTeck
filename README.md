@@ -4,7 +4,7 @@
 --- 
 ## Enunciado
 
-La empresa **NovaTech Academic Solutions** ha heredado un sistema de escritorio desarrollado en JavaFX para la gestión de documentos PDF académicos. El sistema actual corresponde a una **versión legacy** que ya se encuentra operativa, pero cuyo diseño interno presenta rigidez y dificultades de extensión.
+La empresa **NovaTeck Academic Solutions** ha heredado un sistema de escritorio desarrollado en JavaFX para la gestión de documentos PDF académicos. El sistema actual corresponde a una **versión legacy** que ya se encuentra operativa, pero cuyo diseño interno presenta rigidez y dificultades de extensión.
 
 Actualmente, el sistema permite:
 
