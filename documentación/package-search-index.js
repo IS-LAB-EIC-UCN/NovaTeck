@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"cl.ucn.daos"},{"l":"cl.ucn.dominio"},{"l":"cl.ucn.main"},{"l":"cl.ucn.servicios"}];updateSearchResults();

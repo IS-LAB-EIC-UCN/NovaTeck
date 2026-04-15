@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"cl.ucn.dominio","l":"Documento"},{"p":"cl.ucn.daos","l":"DocumentoDAO"},{"p":"cl.ucn.servicios","l":"DocumentoService"},{"p":"cl.ucn.daos","l":"IDocumentoDAO"},{"p":"cl.ucn.main","l":"MainApp"}];updateSearchResults();
