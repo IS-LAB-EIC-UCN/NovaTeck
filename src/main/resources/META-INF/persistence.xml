@@ -1,0 +1,22 @@
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.0">
+    <persistence-unit name="documentosPU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <!-- Entidades -->
+        <class>cl.ucn.dominio.Documento</class>
+        <properties>
+            <!-- SQLite -->
+            <property name="jakarta.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite:documentos.db"/>
+            <property name="hibernate.dialect" value="org.hibernate.community.dialect.SQLiteDialect"/>
+
+            <!-- Mostrar SQL (usar CLAVES de Hibernate, no las JPA estándar) -->
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+
+            <!-- Crear al arrancar y update al cerrar el EntityManagerFactory -->
+            <property name="hibernate.hbm2ddl.auto" value="none"/>
+
+        </properties>
+    </persistence-unit>
+</persistence>
