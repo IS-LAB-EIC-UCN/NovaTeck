@@ -188,7 +188,9 @@ public class DocumentoService {
 
         int puntajeBeamer = 0;
         int puntajeReporte = 0;
+        int puntajeTabular = 0;
 
+        // pistas por nombre de archivo
         if (nombre.contains("beamer") || nombre.contains("slides") || nombre.contains("presentacion")) {
             puntajeBeamer += 2;
         }
@@ -197,6 +199,7 @@ public class DocumentoService {
             puntajeReporte += 2;
         }
 
+        // pistas por contenido tipo beamer
         if (texto.contains("table of contents")) puntajeBeamer++;
         if (texto.contains("contents")) puntajeBeamer++;
         if (texto.contains("section")) puntajeBeamer++;
@@ -206,6 +209,7 @@ public class DocumentoService {
         if (texto.contains("thank you")) puntajeBeamer++;
         if (texto.contains("questions")) puntajeBeamer++;
 
+        // pistas por contenido tipo reporte
         if (texto.contains("introducción")) puntajeReporte++;
         if (texto.contains("introduccion")) puntajeReporte++;
         if (texto.contains("resumen")) puntajeReporte++;
@@ -216,11 +220,36 @@ public class DocumentoService {
         if (texto.contains("bibliografía")) puntajeReporte++;
         if (texto.contains("bibliografia")) puntajeReporte++;
 
+        // pistas de documento tabular, pero en la versión legacy
+        // no se reconoce todavía como un tipo propio
+        if (texto.contains("cantidad")) puntajeTabular++;
+        if (texto.contains("subtotal")) puntajeTabular++;
+        if (texto.contains("total")) puntajeTabular++;
+        if (texto.contains("promedio")) puntajeTabular++;
+        if (texto.contains("fila")) puntajeTabular++;
+        if (texto.contains("columna")) puntajeTabular++;
+        if (texto.contains("enero")) puntajeTabular++;
+        if (texto.contains("febrero")) puntajeTabular++;
+        if (texto.contains("marzo")) puntajeTabular++;
+        if (texto.contains("abril")) puntajeTabular++;
+        if (texto.contains("saldo")) puntajeTabular++;
+        if (texto.contains("presupuesto")) puntajeTabular++;
+        if (texto.contains("mes")) puntajeTabular++;
+
+        // prioridad a BEAMER si sus pistas son claras
         if (puntajeBeamer >= puntajeReporte && puntajeBeamer >= 2) {
             return "BEAMER";
         }
 
-        if (puntajeReporte >= 1) {
+        // si el documento parece fuertemente tabular, en esta versión
+        // se marca como DESCONOCIDO para no confundirlo con REPORTE
+        if (puntajeTabular >= 4) {
+            return "DESCONOCIDO";
+        }
+
+        // para considerarlo reporte, exigimos más de una pista,
+        // evitando falsos positivos por palabras aisladas
+        if (puntajeReporte >= 2) {
             return "REPORTE";
         }
 
