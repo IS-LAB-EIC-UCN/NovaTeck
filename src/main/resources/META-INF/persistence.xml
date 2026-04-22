@@ -15,7 +15,7 @@
             <property name="hibernate.format_sql" value="true"/>
 
             <!-- Crear al arrancar y update al cerrar el EntityManagerFactory -->
-            <property name="hibernate.hbm2ddl.auto" value="none"/>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
 
         </properties>
     </persistence-unit>

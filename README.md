@@ -407,3 +407,82 @@ Se valorará especialmente que la solución:
 ## Observación final
 
 En esta segunda etapa no se espera únicamente que el sistema “funcione”, sino que su diseño muestre una evolución clara respecto de la versión legacy. La meta es construir una solución preparada para crecer de manera más ordenada, comprensible y mantenible.
+
+---
+
+# Solución
+
+## Flujo actual de la solución
+
+- El usuario sube un archivo PDF.
+- `DocumentoService` recibe el archivo.
+- El servicio valida que el archivo sea un PDF.
+- El servicio extrae el texto del documento y cuenta sus páginas.
+- Con esa información, `DocumentoService` detecta el tipo documental:
+    - `REPORTE`
+    - `BEAMER`
+    - `PDF_EXCEL`
+    - `DESCONOCIDO`
+- Luego se crea el objeto `Documento` con sus datos:
+    - nombre
+    - ruta
+    - tipo detectado
+    - número de páginas
+    - resultado inicial
+- El documento se guarda en la base de datos.
+
+## Flujo de evaluación
+
+- Cuando se quiere evaluar el documento, se llama a `evaluarDocumento(documento)`.
+- `DocumentoService` no usa un `if/else` grande para decidir la evaluación.
+- En su lugar, llama a:
+  `documento.accept(visitorEvaluacion)`
+
+### Dónde participa Visitor
+
+- El patrón **Visitor** participa en `Documento.accept(...)`.
+- `Documento` revisa su `tipoDetectado`.
+- Según ese tipo, delega al método correspondiente del visitor:
+    - `visitarReporte(...)`
+    - `visitarBeamer(...)`
+    - `visitarPdfExcel(...)`
+    - `visitarDesconocido(...)`
+
+En esta parte, **Visitor decide qué evaluación específica corresponde aplicar**.
+
+### Dónde participa Template Method
+
+- Una vez que el visitor identifica el caso, crea el evaluador concreto:
+    - `EvaluadorReporte`
+    - `EvaluadorBeamer`
+    - `EvaluadorPdfExcel`
+    - `EvaluadorDesconocido`
+- Todos esos evaluadores heredan de `EvaluadorDocumentoTemplate`.
+
+La clase `EvaluadorDocumentoTemplate` define la estructura general de evaluación:
+
+- validar documento
+- verificar regla
+- retornar mensaje de éxito o fallo
+
+Cada subclase cambia solo lo específico de su tipo:
+
+- la regla que debe cumplirse
+- el mensaje de éxito
+- el mensaje de fallo
+
+En esta parte, **Template Method define cómo se ejecuta la evaluación de manera uniforme**.
+
+## Cierre del flujo
+
+- El resultado vuelve a `DocumentoService`.
+- `DocumentoService` asigna el resultado al objeto `Documento`.
+- Finalmente, actualiza el documento en la base de datos.
+
+## Nota
+
+La razón de que este diseño sea más adecuado que uno donde Template Method dirija todo es que aquí la primera decisión 
+importante no es la secuencia de pasos, sino el tipo de documento. Primero hay que distinguir si el archivo es REPORTE, 
+BEAMER o PDF_EXCEL; recién después tiene sentido aplicar una plantilla común de evaluación. Por eso es más natural que 
+Visitor haga el despacho inicial y que luego Template Method organice la lógica común de cada evaluación. Si el Template 
+Method dirigiera desde el comienzo, quedaría forzado, porque la decisión central seguiría dependiendo del tipo documental.

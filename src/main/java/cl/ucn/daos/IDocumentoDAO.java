@@ -54,4 +54,6 @@ public interface IDocumentoDAO {
      * @return lista de documentos disponibles.
      */
     List<Documento> listarTodos();
+
+    void eliminarPorId(Integer id);
 }

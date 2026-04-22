@@ -65,6 +65,7 @@ public class MainApp extends Application {
     public void start(Stage stage) {
         Button btnSubir = new Button("Subir PDF");
         Button btnEvaluar = new Button("Evaluar seleccionado");
+        Button btnEliminar = new Button("Eliminar seleccionado");
         Button btnRefrescar = new Button("Refrescar");
 
         TableColumn<Documento, String> colArchivo = new TableColumn<>("Archivo");
@@ -108,13 +109,14 @@ public class MainApp extends Application {
 
         btnSubir.setOnAction(e -> subirPdf(stage));
         btnEvaluar.setOnAction(e -> evaluarSeleccionado());
+        btnEliminar.setOnAction(e -> eliminarSeleccionado());
         btnRefrescar.setOnAction(e -> cargarTabla());
 
         tabla.getSelectionModel().selectedItemProperty().addListener((obs, anterior, actual) -> {
             mostrarDetalle(actual);
         });
 
-        VBox root = new VBox(12, btnSubir, btnEvaluar, btnRefrescar, tabla, detalle);
+        VBox root = new VBox(12, btnSubir, btnEvaluar, btnEliminar, btnRefrescar, tabla, detalle);
         root.setPadding(new Insets(15));
         VBox.setVgrow(tabla, Priority.ALWAYS);
 
@@ -306,6 +308,38 @@ public class MainApp extends Application {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    private void eliminarSeleccionado() {
+        Documento seleccionado = tabla.getSelectionModel().getSelectedItem();
+
+        if (seleccionado == null) {
+            mostrarError("Debe seleccionar un documento para eliminar.");
+            return;
+        }
+
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar eliminación");
+        confirmacion.setHeaderText("Eliminar documento");
+        confirmacion.setContentText(
+                "¿Desea eliminar el documento \"" + valorSeguro(seleccionado.getNombreArchivo()) + "\"?"
+        );
+
+        ButtonType resultado = confirmacion.showAndWait().orElse(ButtonType.CANCEL);
+
+        if (resultado != ButtonType.OK) {
+            return;
+        }
+
+        try {
+            documentoService.eliminarDocumento(seleccionado.getId());
+            cargarTabla();
+            tabla.getSelectionModel().clearSelection();
+            detalle.clear();
+            mostrarInfo("Documento eliminado correctamente.");
+        } catch (Exception ex) {
+            mostrarError("Error al eliminar el documento: " + ex.getMessage());
+        }
     }
 
     /**

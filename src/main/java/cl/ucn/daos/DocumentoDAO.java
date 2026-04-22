@@ -3,6 +3,7 @@ package cl.ucn.daos;
 import cl.ucn.dominio.Documento;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 
 import java.util.List;
@@ -175,4 +176,31 @@ public class DocumentoDAO implements IDocumentoDAO {
             em.close();
         }
     }
+
+    @Override
+    public void eliminarPorId(Integer id) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            Documento documento = em.find(Documento.class, id);
+            if (documento == null) {
+                throw new IllegalArgumentException("No existe un documento con id " + id);
+            }
+
+            em.remove(documento);
+
+            tx.commit();
+        } catch (Exception ex) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw ex;
+        } finally {
+            em.close();
+        }
+    }
+
 }
